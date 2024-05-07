@@ -1,6 +1,7 @@
 package dispatcher
 
 import (
+	"fmt"
 	"migoro/adapters"
 	"migoro/query"
 	"migoro/utils"
@@ -10,7 +11,7 @@ import (
 func Rollback() {
 	adapter := adapters.Init()
 
-	md := query.GetMigrations(adapter.GetLatestMigrationsQuery())
+	md := adapter.GetLatestMigrationsFromLog()
 	var dmi []string
 
 	{
@@ -34,18 +35,18 @@ func Rollback() {
 	}
 
 	if len(dmi) != 0 {
-		for _, f := range dmi {
-			m := utils.GetFileContent(f)
+		for _, file := range dmi {
+			m := utils.GetFileContent(file)
 			c := strings.TrimSpace(utils.GetStringInBetween(m, "/* DOWN-START */", "/* DOWN-END */"))
 
 			if len(c) == 0 {
-				utils.Warning("Rollback", "Script not defined in: "+f)
+				utils.Warning("Rollback", fmt.Sprintf("Script not defined in: %s", file))
 				continue
 			}
 
-			query.ApplyMigration(c)
-			query.CleanMigrationLog(adapter.RollbackMigrationLogQuery(), f)
-			utils.Success("Migration Rolled Back", f)
+			query.ApplyMigration(adapter.Connection(), c)
+			adapter.CleanMigrationLog(file)
+			utils.Success("Migration Rolled Back", file)
 		}
 	} else {
 		utils.Success("Rollback", "Nothing to rollback")

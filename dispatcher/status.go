@@ -3,7 +3,6 @@ package dispatcher
 import (
 	"fmt"
 	"migoro/adapters"
-	"migoro/query"
 	"migoro/utils"
 	"strings"
 
@@ -30,7 +29,7 @@ func Status() {
 			fmt.Println(aurora.Yellow(file + o + " EMPTY FILE"))
 			continue
 		}
-		if utils.InSliceOfStructs(query.GetMigrations(adapter.GetMigrationsQuery()), "MigrationFile", file) {
+		if utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), "MigrationFile", file) {
 			fmt.Println(aurora.Green(file + o + " APPLIED"))
 		} else {
 			fmt.Println(aurora.Red(file + o + " NOT APPLIED"))

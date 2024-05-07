@@ -12,10 +12,10 @@ func Migrate() {
 
 	l := 0
 	f := utils.IOReadDir(utils.Env("MIGRATION_DIR"))
-	h := utils.MakeRandom()
+	hash := utils.MakeRandom()
 
 	for _, file := range f {
-		if !utils.InSliceOfStructs(query.GetMigrations(adapter.GetMigrationsQuery()), "MigrationFile", file) {
+		if !utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), "MigrationFile", file) {
 
 			m := utils.GetFileContent(file)
 			c := strings.TrimSpace(utils.GetStringInBetween(m, "/* UP-START */", "/* UP-END */"))
@@ -25,8 +25,8 @@ func Migrate() {
 				continue
 			}
 
-			query.ApplyMigration(c)
-			query.WriteMigrationLog(adapter.WriteMigrationLogQuery(), file, h)
+			query.ApplyMigration(adapter.Connection(), c)
+			adapter.WriteMigrationLog(file, hash)
 			utils.Success("Migration Applied", file)
 
 			l++

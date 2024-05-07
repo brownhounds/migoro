@@ -1,22 +1,15 @@
 package query
 
 import (
-	"migoro/adapters"
+	"migoro/types"
 	"migoro/utils"
 	"os"
+
+	"github.com/jmoiron/sqlx"
 )
 
-type Migration struct {
-	MigrationFile string `db:"migration_file"`
-}
-
-type DbCheck struct {
-	Exists bool `db:"test"`
-}
-
-func Exists(query string) DbCheck {
-	connection := adapters.Init().Connection()
-	r := DbCheck{}
+func Exists(connection *sqlx.DB, query string) types.DbCheck {
+	r := types.DbCheck{}
 	err := connection.Get(&r, query)
 	if err != nil {
 		utils.Error("Executing query", err.Error())
@@ -27,8 +20,7 @@ func Exists(query string) DbCheck {
 	return r
 }
 
-func Query(query string) {
-	connection := adapters.Init().Connection()
+func Query(connection *sqlx.DB, query string) {
 	_, err := connection.Exec(query)
 	if err != nil {
 		utils.Error("Executing query", err.Error())
@@ -38,9 +30,8 @@ func Query(query string) {
 	connection.Close()
 }
 
-func GetMigrations(query string) []Migration {
-	connection := adapters.Init().Connection()
-	m := []Migration{}
+func GetMigrations(connection *sqlx.DB, query string) []types.Migration {
+	m := []types.Migration{}
 	err := connection.Select(&m, query)
 	if err != nil {
 		utils.Error("Getting migration log results", err.Error())
@@ -51,8 +42,7 @@ func GetMigrations(query string) []Migration {
 	return m
 }
 
-func WriteMigrationLog(query string, file string, hash string) {
-	connection := adapters.Init().Connection()
+func WriteMigrationLog(connection *sqlx.DB, query string, file string, hash string) {
 	_, err := connection.Exec(query, file, hash)
 	if err != nil {
 		utils.Error("Insert into migration table", err.Error())
@@ -62,8 +52,7 @@ func WriteMigrationLog(query string, file string, hash string) {
 	connection.Close()
 }
 
-func CleanMigrationLog(query string, file string) {
-	connection := adapters.Init().Connection()
+func CleanMigrationLog(connection *sqlx.DB, query string, file string) {
 	_, err := connection.Exec(query, file)
 	if err != nil {
 		utils.Error("Remove from migration table", err.Error())
@@ -73,8 +62,7 @@ func CleanMigrationLog(query string, file string) {
 	connection.Close()
 }
 
-func ApplyMigration(query string) {
-	connection := adapters.Init().Connection()
+func ApplyMigration(connection *sqlx.DB, query string) {
 	tx, err := connection.Begin()
 	if err != nil {
 		utils.Error("Applying migration", err.Error())
