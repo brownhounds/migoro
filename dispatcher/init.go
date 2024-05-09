@@ -6,28 +6,28 @@ import (
 	"migoro/utils"
 )
 
-func initializeMigrationLog(adapter types.Adapter) {
-	migrationTable := adapter.MigrationsLogExists()
-
-	if !migrationTable.Exists {
-		adapter.CreateMigrationsLog()
-		utils.Success("Table Created", utils.Env("MIGRATION_TABLE")) // TODO: WHAAAAT??
+func initializeDatabase(adapter *types.Adapter) {
+	if !(*adapter).DatabaseExists().Exists {
+		(*adapter).CreateDatabase()
+		utils.Success("Database Created", (*adapter).GetDatabaseName())
 	} else {
-		utils.Warning("Table already exists", utils.Env("MIGRATION_TABLE"))
+		utils.Warning("Database already exists", (*adapter).GetDatabaseName())
 	}
 }
 
-func initializeDatabase(adapter types.Adapter) {
-	if !adapter.DatabaseExists().Exists {
-		adapter.CreateDatabase()
-		utils.Success("Database Created", utils.Env("SQL_DB"))
+func initializeMigrationLog(adapter *types.Adapter) {
+	migrationTable := (*adapter).MigrationsLogExists()
+
+	if !migrationTable.Exists {
+		(*adapter).CreateMigrationsLog()
+		utils.Success("Table Created", (*adapter).GetMigrationTableName()) // Add function to an adapter
 	} else {
-		utils.Warning("Database already exists", utils.Env("SQL_DB"))
+		utils.Warning("Table already exists", (*adapter).GetMigrationTableName())
 	}
 }
 
 func Init() {
 	adapter := adapters.Init()
-	initializeDatabase(adapter)
-	initializeMigrationLog(adapter)
+	initializeDatabase(&adapter)
+	initializeMigrationLog(&adapter)
 }

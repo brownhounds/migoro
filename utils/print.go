@@ -18,6 +18,12 @@ func Warning(h string, m string) {
 	fmt.Printf("%s %s\n", hf, mf)
 }
 
+func Info(h string, m string) {
+	hf := aurora.Cyan(h + ":").Bold()
+	mf := aurora.Cyan(m)
+	fmt.Printf("%s %s\n", hf, mf)
+}
+
 func Success(h string, m string) {
 	hf := aurora.Green(h + ":").Bold()
 	mf := aurora.Green(m)

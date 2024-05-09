@@ -1,6 +1,7 @@
 package dispatcher
 
 import (
+	"fmt"
 	"migoro/adapters"
 	"migoro/query"
 	"migoro/utils"
@@ -15,19 +16,23 @@ func Migrate() {
 	hash := utils.MakeRandom()
 
 	for _, file := range f {
-		if !utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), "MigrationFile", file) {
+		if !utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), file) {
 
 			m := utils.GetFileContent(file)
-			c := strings.TrimSpace(utils.GetStringInBetween(m, "/* UP-START */", "/* UP-END */"))
+			migrationContents := strings.TrimSpace(utils.GetStringInBetween(m, "/* UP-START */", "/* UP-END */"))
 
-			if len(c) == 0 {
+			if len(migrationContents) == 0 {
 				utils.Warning("Migration file is empty", file)
 				continue
 			}
 
-			query.ApplyMigration(adapter.Connection(), c)
+			utils.Info("Applying Migration", "...")
+			fmt.Println(migrationContents)
+
+			query.ApplyMigration(adapter.Connection(), migrationContents)
 			adapter.WriteMigrationLog(file, hash)
 			utils.Success("Migration Applied", file)
+			fmt.Println("")
 
 			l++
 		}

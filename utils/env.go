@@ -6,11 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-
 func Env(k string) string {
-	err := godotenv.Load()
-	if err != nil {
-		Warning("Loading .env file", err.Error())
-	}
+	godotenv.Load()
 	return os.Getenv(k)
 }

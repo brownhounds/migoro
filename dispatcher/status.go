@@ -29,7 +29,7 @@ func Status() {
 			fmt.Println(aurora.Yellow(file + o + " EMPTY FILE"))
 			continue
 		}
-		if utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), "MigrationFile", file) {
+		if utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), file) {
 			fmt.Println(aurora.Green(file + o + " APPLIED"))
 		} else {
 			fmt.Println(aurora.Red(file + o + " NOT APPLIED"))

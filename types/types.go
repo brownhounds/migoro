@@ -15,6 +15,8 @@ type DbCheck struct {
 type Adapter interface {
 	Connection() *sqlx.DB
 	ValidateEnvironment()
+	GetMigrationTableName() string
+	GetDatabaseName() string
 	DatabaseExists() DbCheck
 	CreateDatabase()
 	MigrationsLogExists() DbCheck

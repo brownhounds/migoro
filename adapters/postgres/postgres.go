@@ -13,24 +13,21 @@ import (
 )
 
 const (
-
+	SQL_HOST         = "SQL_HOST"
+	SQL_PORT         = "SQL_PORT"
+	SQL_USER         = "SQL_USER"
+	SQL_PASSWORD     = "SQL_PASSWORD"
+	SQL_DB           = "SQL_DB"
+	SQL_DB_SCHEMA    = "SQL_DB_SCHEMA"
+	SQL_SSL          = "SQL_SSL"
+	MIGRATION_DIR    = "MIGRATION_DIR"
+	MIGRATION_TABLE  = "MIGRATION_TABLE"
+	MIGRATION_SCHEMA = "MIGRATION_SCHEMA"
 )
 
-const (
-	SQL_HOST = "SQL_HOST"
-	SQL_PORT = "SQL_PORT"
-	SQL_USER = "SQL_USER"
-	SQL_PASSWORD = "SQL_PASSWORD"
-	SQL_DB = "SQL_DB"
-	SQL_DB_SCHEMA = "SQL_DB_SCHEMA"
-	SQL_SSL = "SQL_SSL"
-	MIGRATION_DIR = "MIGRATION_DIR"
-	MIGRATION_TABLE = "MIGRATION_TABLE"
-)
+type Postgres struct{}
 
-type Postgres struct {}
-
-func (adapter Postgres) Connection() *sqlx.DB {
+func (adapter *Postgres) Connection() *sqlx.DB {
 	connection, err := sqlx.Open(utils.Env("SQL_DRIVER"), fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s search_path=%s",
 		utils.Env(SQL_HOST),
 		utils.Env(SQL_PORT),
@@ -59,7 +56,7 @@ func (adapter Postgres) Connection() *sqlx.DB {
 	return connection
 }
 
-func (adapter Postgres) ConnectionWithoutDB() *sqlx.DB {
+func (adapter *Postgres) ConnectionWithoutDB() *sqlx.DB {
 	connection, err := sqlx.Open(utils.Env("SQL_DRIVER"), fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=%s",
 		utils.Env(SQL_HOST),
 		utils.Env(SQL_PORT),
@@ -86,8 +83,8 @@ func (adapter Postgres) ConnectionWithoutDB() *sqlx.DB {
 	return connection
 }
 
-func (adapter Postgres) ValidateEnvironment() {
-    utils.ValidateEnvVariables([]string{
+func (adapter *Postgres) ValidateEnvironment() {
+	utils.ValidateEnvVariables([]string{
 		SQL_HOST,
 		SQL_PORT,
 		SQL_USER,
@@ -99,34 +96,42 @@ func (adapter Postgres) ValidateEnvironment() {
 	})
 }
 
-func (adapter Postgres) DatabaseExists() types.DbCheck {
-	return query.Exists(adapter.ConnectionWithoutDB(), Query{}.DatabaseExistsQuery())
+func (adapter *Postgres) GetMigrationTableName() string {
+	return utils.Env(MIGRATION_TABLE)
 }
 
-func (adapter Postgres) CreateDatabase() {
-	query.Query(adapter.ConnectionWithoutDB(), Query{}.CreateDatabaseQuery())
+func (adapter *Postgres) GetDatabaseName() string {
+	return utils.Env(SQL_DB)
 }
 
-func (adapter Postgres) MigrationsLogExists() types.DbCheck {
-	return query.Exists(adapter.Connection(), Query{}.TableLogExistsQuery())
+func (adapter *Postgres) DatabaseExists() types.DbCheck {
+	return query.Exists(adapter.ConnectionWithoutDB(), DatabaseExistsQuery())
 }
 
-func (adapter Postgres) CreateMigrationsLog() {
-	query.Query(adapter.Connection(), Query{}.CreateLogTableQuery())
+func (adapter *Postgres) CreateDatabase() {
+	query.Query(adapter.ConnectionWithoutDB(), CreateDatabaseQuery())
 }
 
-func (adapter Postgres) GetMigrationsFromLog() []types.Migration {
-	return query.GetMigrations(adapter.Connection(), Query{}.GetMigrationsQuery())
+func (adapter *Postgres) MigrationsLogExists() types.DbCheck {
+	return query.Exists(adapter.Connection(), TableLogExistsQuery())
 }
 
-func (adapter Postgres) WriteMigrationLog(file string, hash string) {
-	query.WriteMigrationLog(adapter.Connection(), Query{}.WriteMigrationLogQuery(), file, hash)
+func (adapter *Postgres) CreateMigrationsLog() {
+	query.Query(adapter.Connection(), CreateLogTableQuery())
 }
 
-func (adapter Postgres) GetLatestMigrationsFromLog() []types.Migration {
-	return query.GetMigrations(adapter.Connection(), Query{}.GetLatestMigrationsQuery())
+func (adapter *Postgres) GetMigrationsFromLog() []types.Migration {
+	return query.GetMigrations(adapter.Connection(), GetMigrationsQuery())
 }
 
-func (adapter Postgres) CleanMigrationLog(file string) {
-	query.CleanMigrationLog(adapter.Connection(), Query{}.CleanMigrationLogQuery(), file)
+func (adapter *Postgres) WriteMigrationLog(file string, hash string) {
+	query.WriteMigrationLog(adapter.Connection(), WriteMigrationLogQuery(), file, hash)
+}
+
+func (adapter *Postgres) GetLatestMigrationsFromLog() []types.Migration {
+	return query.GetMigrations(adapter.Connection(), GetLatestMigrationsQuery())
+}
+
+func (adapter *Postgres) CleanMigrationLog(file string) {
+	query.CleanMigrationLog(adapter.Connection(), CleanMigrationLogQuery(), file)
 }
