@@ -15,17 +15,9 @@ func Rollback() {
 	var dmi []string
 
 	for _, m := range md {
-		f := m.MigrationFile
+		f := m.MigrationFile + "_" + utils.DOWN + ".sql"
 		if !utils.Exists(f) {
 			utils.Error("Rollback", "Migration file is missing: "+f)
-			continue
-		}
-
-		m := utils.GetFileContent(f)
-		migrationContents := strings.TrimSpace(utils.GetStringInBetween(m, "/* DOWN-START */", "/* DOWN-END */"))
-
-		if migrationContents == "" {
-			utils.Warning("Rollback", "Script not defined in: "+f)
 			continue
 		}
 
@@ -34,8 +26,7 @@ func Rollback() {
 
 	if len(dmi) != 0 {
 		for _, file := range dmi {
-			m := utils.GetFileContent(file)
-			migrationContents := strings.TrimSpace(utils.GetStringInBetween(m, "/* DOWN-START */", "/* DOWN-END */"))
+			migrationContents := strings.TrimSpace(utils.GetMigrationFileContent(file))
 
 			if migrationContents == "" {
 				utils.Warning("Rollback", fmt.Sprintf("Script not defined in: %s", file))
@@ -46,7 +37,8 @@ func Rollback() {
 			fmt.Println(migrationContents)
 
 			query.ApplyMigration(adapter.Connection(), migrationContents)
-			adapter.CleanMigrationLog(file)
+			fileNoSuffix, _ := strings.CutSuffix(file, "_"+utils.DOWN+".sql")
+			adapter.CleanMigrationLog(fileNoSuffix)
 			utils.Success("Migration Rolled Back", file)
 			fmt.Println("")
 		}

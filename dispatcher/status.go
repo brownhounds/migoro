@@ -16,21 +16,29 @@ func Status() {
 
 	l := 0
 	for _, file := range files {
+		if !strings.HasSuffix(file, utils.UP+".sql") {
+			continue
+		}
+
 		if len(file) > l {
 			l = len(file)
 		}
 	}
 
 	for _, file := range files {
+		if !strings.HasSuffix(file, utils.UP+".sql") {
+			continue
+		}
+
 		o := strings.Repeat(" ", l-len(file))
-		m := utils.GetFileContent(file)
-		c := strings.TrimSpace(utils.GetStringInBetween(m, "/* UP-START */", "/* UP-END */"))
+		c := strings.TrimSpace(utils.GetMigrationFileContent(file))
 
 		if c == "" {
 			fmt.Println(aurora.Yellow(file + o + " EMPTY FILE"))
 			continue
 		}
-		if utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), file) {
+		fileNoSuffix, _ := strings.CutSuffix(file, "_"+utils.UP+".sql")
+		if utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), fileNoSuffix) {
 			fmt.Println(aurora.Green(file + o + " APPLIED"))
 		} else {
 			fmt.Println(aurora.Red(file + o + " NOT APPLIED"))

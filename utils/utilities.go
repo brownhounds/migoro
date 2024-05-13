@@ -11,34 +11,45 @@ import (
 	"time"
 )
 
-func CreateMigration(n string) {
-	t := truncateString(strconv.FormatInt(time.Now().UnixNano(), 10), 12)
+const (
+	MIGRATION_DIR = "MIGRATION_DIR"
+	UP            = "up"
+	DOWN          = "down"
+)
+
+func CreateMigrationFile(name string) {
 	CreateDirIfNotExist()
 
-	fn := t + "_" + n + ".sql"
-	f := getMigrationsPath() + fn
-	createMigrationFile(f)
-	Success("Migration Created", fn)
+	t := truncateString(strconv.FormatInt(time.Now().UnixNano(), 10), 12)
+
+	up := getMigrationFileName(t, name, UP)
+	down := getMigrationFileName(t, name, DOWN)
+
+	createMigrationFile(up)
+	createMigrationFile(down)
+
+	Success("Migration File Created", up)
+	Success("Migration File Created", down)
+}
+
+func getMigrationFileName(t, name, method string) string {
+	return getMigrationsPath() + t + "_" + name + "_" + method + ".sql"
 }
 
 func createMigrationFile(f string) {
-	t := []byte("/* UP-START */\n\n/* UP-END */\n/* DOWN-START */\n\n/* DOWN-END */")
-
-	err := os.WriteFile(f, t, 0o644)
-	if err != nil {
+	if err := os.WriteFile(f, make([]byte, 0), 0o644); err != nil {
 		Error("Creating migration file", err.Error())
 		os.Exit(1)
 	}
 }
 
 func getMigrationsPath() string {
-	return Env("MIGRATION_DIR") + "/"
+	return strings.TrimSuffix(Env(MIGRATION_DIR), "/") + "/"
 }
 
 func CreateDirIfNotExist() {
-	if _, err := os.Stat(Env("MIGRATION_DIR")); os.IsNotExist(err) {
-		err = os.MkdirAll(Env("MIGRATION_DIR"), 0o755)
-		if err != nil {
+	if _, err := os.Stat(Env(MIGRATION_DIR)); os.IsNotExist(err) {
+		if err = os.MkdirAll(Env(MIGRATION_DIR), 0o755); err != nil {
 			Error("Creating migration directory", err.Error())
 			os.Exit(1)
 		}
@@ -79,24 +90,27 @@ func InSliceOfStructs(slice []types.Migration, value string) bool {
 	return false
 }
 
-func GetFileContent(f string) string {
+func stripSQLComments(c []byte) string {
+	partsOut := make([]string, 0)
+	parts := strings.Split(string(c), "\n")
+
+	for _, line := range parts {
+		if !strings.HasPrefix(strings.TrimSpace(line), "--") {
+			partsOut = append(partsOut, line)
+		}
+	}
+
+	return strings.Join(partsOut, "\n")
+}
+
+func GetMigrationFileContent(f string) string {
 	c, err := os.ReadFile(getMigrationsPath() + f)
 	if err != nil {
 		Error("Reading migration file", err.Error())
 		os.Exit(1)
 	}
 
-	return string(c)
-}
-
-func GetStringInBetween(str, start, end string) (r string) {
-	s := strings.Index(str, start)
-	if s == -1 {
-		return
-	}
-	s += len(start)
-	e := strings.Index(str, end)
-	return str[s:e]
+	return stripSQLComments(c)
 }
 
 func ValidateStringANU(s string) bool {

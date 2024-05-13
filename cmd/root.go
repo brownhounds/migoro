@@ -11,8 +11,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "migoro",
-	Short: "A brief description of your application",
-	Long:  fmt.Sprintf(`%s - Database migration manager%s%s`, aurora.Cyan("\nMigoro").String(), "\nv1.0", "\n\nAvailable Drivers:\n- Postgres"),
+	Short: "CLI Database Migrator",
+	Long:  fmt.Sprintf(`%s - Database migration manager%s`, aurora.Cyan("\nMigoro").String(), "\n\nAvailable Drivers:\n- Postgres\n- SQLite3"),
 }
 
 func Execute() {

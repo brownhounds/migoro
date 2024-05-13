@@ -11,6 +11,7 @@ var rollbackCmd = &cobra.Command{
 	Short: "Rollback latest migrations",
 	Long:  "\n" + `Revert all the changes applied by the late 'migrate' command. The manager will attempt to run all the corresponding DOWN scripts. In case of missing or empty files rollback will be prevented.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		dispatcher.Init()
 		dispatcher.Rollback()
 	},
 }

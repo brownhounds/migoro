@@ -11,5 +11,5 @@ func Make(n string) {
 		os.Exit(1)
 	}
 
-	utils.CreateMigration(n)
+	utils.CreateMigrationFile(n)
 }

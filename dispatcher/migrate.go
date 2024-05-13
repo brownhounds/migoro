@@ -16,14 +16,19 @@ func Migrate() {
 	hash := utils.MakeRandom()
 
 	for _, file := range f {
-		if utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), file) {
+		if !strings.HasSuffix(file, "_"+utils.UP+".sql") {
 			continue
 		}
 
-		m := utils.GetFileContent(file)
-		migrationContents := strings.TrimSpace(utils.GetStringInBetween(m, "/* UP-START */", "/* UP-END */"))
+		fileNoSuffix, _ := strings.CutSuffix(file, "_"+utils.UP+".sql")
 
-		if migrationContents == "" {
+		if utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), fileNoSuffix) {
+			continue
+		}
+
+		migrationContents := strings.TrimSpace(utils.GetMigrationFileContent(file))
+
+		if strings.TrimSpace(migrationContents) == "" {
 			utils.Warning("Migration file is empty", file)
 			continue
 		}
@@ -32,7 +37,8 @@ func Migrate() {
 		fmt.Println(migrationContents)
 
 		query.ApplyMigration(adapter.Connection(), migrationContents)
-		adapter.WriteMigrationLog(file, hash)
+		adapter.WriteMigrationLog(fileNoSuffix, hash)
+
 		utils.Success("Migration Applied", file)
 		fmt.Println("")
 
