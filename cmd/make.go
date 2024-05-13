@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
-
 	"migoro/dispatcher"
+
+	"github.com/spf13/cobra"
 )
 
 var makeCmd = &cobra.Command{

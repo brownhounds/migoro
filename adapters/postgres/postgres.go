@@ -2,11 +2,10 @@ package postgres
 
 import (
 	"fmt"
-	"os"
-
 	"migoro/query"
 	"migoro/types"
 	"migoro/utils"
+	"os"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -37,7 +36,6 @@ func (adapter *Postgres) Connection() *sqlx.DB {
 		utils.Env(SQL_SSL),
 		utils.Env(SQL_DB_SCHEMA),
 	))
-
 	if err != nil {
 		utils.Error("Database connection", err.Error())
 		os.Exit(1)
@@ -64,7 +62,6 @@ func (adapter *Postgres) ConnectionWithoutDB() *sqlx.DB {
 		utils.Env(SQL_PASSWORD),
 		utils.Env(SQL_SSL),
 	))
-
 	if err != nil {
 		utils.Error("Database connection", err.Error())
 		os.Exit(1)

@@ -20,7 +20,7 @@ func initializeMigrationLog(adapter *types.Adapter) {
 
 	if !migrationTable.Exists {
 		(*adapter).CreateMigrationsLog()
-		utils.Success("Table Created", (*adapter).GetMigrationTableName()) // Add function to an adapter
+		utils.Success("Table Created", (*adapter).GetMigrationTableName())
 	} else {
 		utils.Warning("Table already exists", (*adapter).GetMigrationTableName())
 	}

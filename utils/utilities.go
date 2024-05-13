@@ -24,7 +24,7 @@ func CreateMigration(n string) {
 func createMigrationFile(f string) {
 	t := []byte("/* UP-START */\n\n/* UP-END */\n/* DOWN-START */\n\n/* DOWN-END */")
 
-	err := os.WriteFile(f, t, 0644)
+	err := os.WriteFile(f, t, 0o644)
 	if err != nil {
 		Error("Creating migration file", err.Error())
 		os.Exit(1)
@@ -37,7 +37,7 @@ func getMigrationsPath() string {
 
 func CreateDirIfNotExist() {
 	if _, err := os.Stat(Env("MIGRATION_DIR")); os.IsNotExist(err) {
-		err = os.MkdirAll(Env("MIGRATION_DIR"), 0755)
+		err = os.MkdirAll(Env("MIGRATION_DIR"), 0o755)
 		if err != nil {
 			Error("Creating migration directory", err.Error())
 			os.Exit(1)

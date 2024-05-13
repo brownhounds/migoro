@@ -14,7 +14,6 @@ func Rollback() {
 	md := adapter.GetLatestMigrationsFromLog()
 	var dmi []string
 
-
 	for _, m := range md {
 		f := m.MigrationFile
 		if !utils.Exists(f) {
@@ -32,7 +31,6 @@ func Rollback() {
 
 		dmi = append(dmi, f)
 	}
-
 
 	if len(dmi) != 0 {
 		for _, file := range dmi {

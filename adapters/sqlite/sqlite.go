@@ -20,7 +20,6 @@ type Sqlite struct{}
 
 func (adapter *Sqlite) Connection() *sqlx.DB {
 	connection, err := sqlx.Open(utils.Env("SQL_DRIVER"), utils.Env("SQL_FILE"))
-
 	if err != nil {
 		utils.Error("Database connection", err.Error())
 		os.Exit(1)

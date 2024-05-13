@@ -1,2 +1,8 @@
 build:
-	GOOS=linux go build -ldflags="-s -w" -o migoro main.go
+	GOOS=linux go build -ldflags="-s -w" -o ./bin/migoro main.go
+
+lint:
+	golangci-lint run --fast
+
+fix:
+	golangci-lint run --fix
