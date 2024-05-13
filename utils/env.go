@@ -7,6 +7,8 @@ import (
 )
 
 func Env(k string) string {
-	godotenv.Load()
+	if err := godotenv.Load(); err != nil {
+		Info("Loading Env File", "File not provided: .env")
+	}
 	return os.Getenv(k)
 }

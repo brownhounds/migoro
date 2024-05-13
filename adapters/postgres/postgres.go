@@ -26,7 +26,7 @@ const (
 
 type Postgres struct{}
 
-func (adapter *Postgres) Connection() *sqlx.DB {
+func (adapter Postgres) Connection() *sqlx.DB {
 	connection, err := sqlx.Open(utils.Env("SQL_DRIVER"), fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s search_path=%s",
 		utils.Env(SQL_HOST),
 		utils.Env(SQL_PORT),
@@ -54,7 +54,7 @@ func (adapter *Postgres) Connection() *sqlx.DB {
 	return connection
 }
 
-func (adapter *Postgres) ConnectionWithoutDB() *sqlx.DB {
+func (adapter Postgres) ConnectionWithoutDB() *sqlx.DB {
 	connection, err := sqlx.Open(utils.Env("SQL_DRIVER"), fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=%s",
 		utils.Env(SQL_HOST),
 		utils.Env(SQL_PORT),
@@ -80,7 +80,7 @@ func (adapter *Postgres) ConnectionWithoutDB() *sqlx.DB {
 	return connection
 }
 
-func (adapter *Postgres) ValidateEnvironment() {
+func (adapter Postgres) ValidateEnvironment() {
 	utils.ValidateEnvVariables([]string{
 		SQL_HOST,
 		SQL_PORT,
@@ -93,42 +93,42 @@ func (adapter *Postgres) ValidateEnvironment() {
 	})
 }
 
-func (adapter *Postgres) GetMigrationTableName() string {
+func (adapter Postgres) GetMigrationTableName() string {
 	return utils.Env(MIGRATION_TABLE)
 }
 
-func (adapter *Postgres) GetDatabaseName() string {
+func (adapter Postgres) GetDatabaseName() string {
 	return utils.Env(SQL_DB)
 }
 
-func (adapter *Postgres) DatabaseExists() types.DbCheck {
+func (adapter Postgres) DatabaseExists() types.DbCheck {
 	return query.Exists(adapter.ConnectionWithoutDB(), DatabaseExistsQuery())
 }
 
-func (adapter *Postgres) CreateDatabase() {
+func (adapter Postgres) CreateDatabase() {
 	query.Query(adapter.ConnectionWithoutDB(), CreateDatabaseQuery())
 }
 
-func (adapter *Postgres) MigrationsLogExists() types.DbCheck {
+func (adapter Postgres) MigrationsLogExists() types.DbCheck {
 	return query.Exists(adapter.Connection(), TableLogExistsQuery())
 }
 
-func (adapter *Postgres) CreateMigrationsLog() {
+func (adapter Postgres) CreateMigrationsLog() {
 	query.Query(adapter.Connection(), CreateLogTableQuery())
 }
 
-func (adapter *Postgres) GetMigrationsFromLog() []types.Migration {
+func (adapter Postgres) GetMigrationsFromLog() []types.Migration {
 	return query.GetMigrations(adapter.Connection(), GetMigrationsQuery())
 }
 
-func (adapter *Postgres) WriteMigrationLog(file string, hash string) {
+func (adapter Postgres) WriteMigrationLog(file, hash string) {
 	query.WriteMigrationLog(adapter.Connection(), WriteMigrationLogQuery(), file, hash)
 }
 
-func (adapter *Postgres) GetLatestMigrationsFromLog() []types.Migration {
+func (adapter Postgres) GetLatestMigrationsFromLog() []types.Migration {
 	return query.GetMigrations(adapter.Connection(), GetLatestMigrationsQuery())
 }
 
-func (adapter *Postgres) CleanMigrationLog(file string) {
+func (adapter Postgres) CleanMigrationLog(file string) {
 	query.CleanMigrationLog(adapter.Connection(), CleanMigrationLogQuery(), file)
 }

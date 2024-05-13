@@ -89,7 +89,7 @@ func GetFileContent(f string) string {
 	return string(c)
 }
 
-func GetStringInBetween(str string, start string, end string) (r string) {
+func GetStringInBetween(str, start, end string) (r string) {
 	s := strings.Index(str, start)
 	if s == -1 {
 		return
@@ -105,16 +105,19 @@ func ValidateStringANU(s string) bool {
 }
 
 func truncateString(str string, num int) string {
-	new := str
+	newStr := str
 	if len(str) > num {
-		new = str[0:num]
+		newStr = str[0:num]
 	}
-	return new
+	return newStr
 }
 
 func MakeRandom() string {
 	s := make([]byte, 16)
-	rand.Read(s)
+	if _, err := rand.Read(s); err != nil {
+		Error("MakeRandom", fmt.Sprintf("No able to generate a random string: %s", err.Error()))
+		os.Exit(1)
+	}
 	return fmt.Sprintf("%x", s)
 }
 

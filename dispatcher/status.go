@@ -26,7 +26,7 @@ func Status() {
 		m := utils.GetFileContent(file)
 		c := strings.TrimSpace(utils.GetStringInBetween(m, "/* UP-START */", "/* UP-END */"))
 
-		if len(c) == 0 {
+		if c == "" {
 			fmt.Println(aurora.Yellow(file + o + " EMPTY FILE"))
 			continue
 		}

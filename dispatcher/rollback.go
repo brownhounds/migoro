@@ -24,7 +24,7 @@ func Rollback() {
 		m := utils.GetFileContent(f)
 		migrationContents := strings.TrimSpace(utils.GetStringInBetween(m, "/* DOWN-START */", "/* DOWN-END */"))
 
-		if len(migrationContents) == 0 {
+		if migrationContents == "" {
 			utils.Warning("Rollback", "Script not defined in: "+f)
 			continue
 		}
@@ -37,7 +37,7 @@ func Rollback() {
 			m := utils.GetFileContent(file)
 			migrationContents := strings.TrimSpace(utils.GetStringInBetween(m, "/* DOWN-START */", "/* DOWN-END */"))
 
-			if len(migrationContents) == 0 {
+			if migrationContents == "" {
 				utils.Warning("Rollback", fmt.Sprintf("Script not defined in: %s", file))
 				continue
 			}
