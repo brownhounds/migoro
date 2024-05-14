@@ -11,6 +11,7 @@
 - [x] Migration File creation have separate file for up and down
 - [x] Weird behavior when having commented out migration code in a file, executes a comment and inserts migration log ?? 🤔
 - [x] Do I need an injection of ENV Vars in to migrations ?? 🤔
+- [x] Add version Command
 - [] Do I want to use configurable logger ?? 🤔
   - [] Possibly use `log` from standard library and set output to stdout?? or else
 
@@ -19,6 +20,7 @@
 - [x] Pointers
 - [x] Pointer to interfaces instead of concrete types 🤔
 - [x] Structures Comparison
+- [x] File Embed - https://stackoverflow.com/questions/13904441/how-can-i-bundle-static-resources-in-a-go-program
 
 Printing structures:
 
