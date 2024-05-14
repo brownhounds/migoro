@@ -1,10 +1,10 @@
 package sqlite
 
 import (
+	"migoro/error_context"
 	"migoro/query"
 	"migoro/types"
 	"migoro/utils"
-	"os"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -18,11 +18,12 @@ const (
 
 type Sqlite struct{}
 
-func (adapter Sqlite) Connection() *sqlx.DB {
+func (adapter Sqlite) Connection() (error, *sqlx.DB) {
 	connection, err := sqlx.Open(utils.Env("SQL_DRIVER"), utils.Env("SQL_FILE"))
 	if err != nil {
 		utils.Error("Database connection", err.Error())
-		os.Exit(1)
+		error_context.Context.SetError()
+		return err, nil
 	}
 
 	{
@@ -32,11 +33,12 @@ func (adapter Sqlite) Connection() *sqlx.DB {
 		if err != nil {
 			connection.Close()
 			utils.Error("Database connection", err.Error())
-			os.Exit(1)
+			error_context.Context.SetError()
+			return err, nil
 		}
 	}
 
-	return connection
+	return nil, connection
 }
 
 func (adapter Sqlite) ValidateEnvironment() {
@@ -55,32 +57,62 @@ func (adapter Sqlite) GetDatabaseName() string {
 	return utils.Env(SQL_FILE)
 }
 
-func (adapter Sqlite) DatabaseExists() types.DbCheck {
-	return types.DbCheck{Exists: true}
+func (adapter Sqlite) DatabaseExists() (error, *types.DbCheck) {
+	return nil, &types.DbCheck{Exists: true}
 }
 
 func (adapter Sqlite) CreateDatabase() {}
 
-func (adapter Sqlite) MigrationsLogExists() types.DbCheck {
-	return query.Exists(adapter.Connection(), TableLogExistsQuery())
+func (adapter Sqlite) MigrationsLogExists() (error, *types.DbCheck) {
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return err, nil
+	}
+	return nil, query.Exists(con, TableLogExistsQuery())
 }
 
 func (adapter Sqlite) CreateMigrationsLog() {
-	query.Query(adapter.Connection(), CreateLogTableQuery())
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+	query.Query(con, CreateLogTableQuery())
 }
 
-func (adapter Sqlite) GetMigrationsFromLog() []types.Migration {
-	return query.GetMigrations(adapter.Connection(), GetMigrationsQuery())
+func (adapter Sqlite) GetMigrationsFromLog() (error, *[]types.Migration) {
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return err, nil
+	}
+	return nil, query.GetMigrations(con, GetMigrationsQuery())
 }
 
 func (adapter Sqlite) WriteMigrationLog(file, hash string) {
-	query.WriteMigrationLog(adapter.Connection(), WriteMigrationLogQuery(), file, hash)
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+	query.WriteMigrationLog(con, WriteMigrationLogQuery(), file, hash)
 }
 
-func (adapter Sqlite) GetLatestMigrationsFromLog() []types.Migration {
-	return query.GetMigrations(adapter.Connection(), GetLatestMigrationsQuery())
+func (adapter Sqlite) GetLatestMigrationsFromLog() (error, *[]types.Migration) {
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return err, nil
+	}
+	return nil, query.GetMigrations(con, GetLatestMigrationsQuery())
 }
 
 func (adapter Sqlite) CleanMigrationLog(file string) {
-	query.CleanMigrationLog(adapter.Connection(), CleanMigrationLogQuery(), file)
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+	query.CleanMigrationLog(con, CleanMigrationLogQuery(), file)
 }

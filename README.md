@@ -15,6 +15,17 @@
 - [] Do I want to use configurable logger ?? 🤔
   - [] Possibly use `log` from standard library and set output to stdout?? or else
 
+## Testing
+
+- [] Write a simple snapshot library - something like jest has 👍
+  - I want an interface to `toMatchSnapshot`
+  - give name of the file
+  - pass a pointer to t testing library
+  - make automatic assertion
+  - detect if snapshot needs updating before asserting shit!
+- [] Do I want to have single snap per file, I say yes
+- [] Make it configurable, give it a dir via ENV var, fuck windows don't worry about!!
+
 ## Learning
 
 - [x] Pointers

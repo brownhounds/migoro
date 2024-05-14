@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"migoro/adapters/postgres"
+	"migoro/adapters/sqlite"
 	"migoro/error_context"
 	"migoro/types"
 	"migoro/utils"
@@ -18,7 +19,7 @@ const (
 var unresolvedAdapterErrorMessage = errors.New("could not resolve the adapter")
 
 func unresolvedAdapterError(adapter string) error {
-	return fmt.Errorf("%w : %s", unresolvedAdapterErrorMessage, adapter)
+	return fmt.Errorf("%w: %s", unresolvedAdapterErrorMessage, adapter)
 }
 
 func Init() (error, types.Adapter) {
@@ -38,9 +39,16 @@ func resolveAdapter() (types.Adapter, error) {
 	switch utils.Env(SQL_DRIVER) {
 	case POSTGRES:
 		return &postgres.Postgres{}, nil
-	// case SQLITE3:
-		// return &sqlite.Sqlite{}, nil
+	case SQLITE3:
+		return &sqlite.Sqlite{}, nil
 	default:
-		return nil, unresolvedAdapterError(utils.Env(SQL_DRIVER))
+		var adapter string
+		if utils.Env(SQL_DRIVER) == "" {
+			adapter = "ADAPTER NOT SET"
+		} else {
+			adapter = utils.Env(SQL_DRIVER)
+		}
+
+		return nil, unresolvedAdapterError(adapter)
 	}
 }

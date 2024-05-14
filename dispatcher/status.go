@@ -36,7 +36,7 @@ func Status() {
 		c := strings.TrimSpace(utils.GetMigrationFileContent(file))
 
 		if c == "" {
-			utils.Warning("EMPTY FILE", file + o)
+			utils.Warning("EMPTY FILE", file+o)
 			continue
 		}
 		fileNoSuffix, _ := strings.CutSuffix(file, "_"+utils.UP+".sql")
@@ -48,9 +48,9 @@ func Status() {
 		}
 
 		if utils.InSliceOfStructs(migrations, fileNoSuffix) {
-			utils.Success("APPLIED", file + o)
+			utils.Success("APPLIED", file+o)
 		} else {
-			utils.Error("NOT APPLIED", file + o)
+			utils.Error("NOT APPLIED", file+o)
 		}
 	}
 }

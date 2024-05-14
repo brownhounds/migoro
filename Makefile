@@ -7,3 +7,9 @@ lint:
 
 fix:
 	golangci-lint run --fix
+
+tests:
+	go test ./test -v
+
+tests_u:
+	UPDATE=yes go test ./test -v
