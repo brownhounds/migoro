@@ -1,13 +1,10 @@
 package dispatcher
 
 import (
-	"fmt"
 	"migoro/adapters"
 	"migoro/error_context"
 	"migoro/utils"
 	"strings"
-
-	"github.com/logrusorgru/aurora/v4"
 )
 
 func Status() {
@@ -39,7 +36,7 @@ func Status() {
 		c := strings.TrimSpace(utils.GetMigrationFileContent(file))
 
 		if c == "" {
-			fmt.Println(aurora.Yellow(file + o + " EMPTY FILE"))
+			utils.Warning("EMPTY FILE", file + o)
 			continue
 		}
 		fileNoSuffix, _ := strings.CutSuffix(file, "_"+utils.UP+".sql")
@@ -51,9 +48,9 @@ func Status() {
 		}
 
 		if utils.InSliceOfStructs(migrations, fileNoSuffix) {
-			fmt.Println(aurora.Green(file + o + " APPLIED"))
+			utils.Success("APPLIED", file + o)
 		} else {
-			fmt.Println(aurora.Red(file + o + " NOT APPLIED"))
+			utils.Error("NOT APPLIED", file + o)
 		}
 	}
 }

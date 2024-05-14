@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"migoro/error_context"
+	"migoro/utils"
 	"migoro/version"
 
 	"github.com/spf13/cobra"
@@ -20,6 +21,6 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		error_context.Context.SetError()
-		fmt.Println(err)
+		utils.Error("Root Command", err.Error())
 	}
 }

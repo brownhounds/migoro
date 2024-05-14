@@ -43,7 +43,7 @@ func Rollback() {
 			}
 
 			utils.Info("Rolling Back Migration", "...")
-			fmt.Println(migrationContents)
+			utils.Notice("Migration Content", migrationContents)
 
 			err, con := adapter.Connection()
 			if err != nil {
@@ -55,7 +55,6 @@ func Rollback() {
 			fileNoSuffix, _ := strings.CutSuffix(file, "_"+utils.DOWN+".sql")
 			adapter.CleanMigrationLog(fileNoSuffix)
 			utils.Success("Migration Rolled Back", file)
-			fmt.Println("")
 		}
 	} else {
 		utils.Success("Rollback", "Nothing to rollback")

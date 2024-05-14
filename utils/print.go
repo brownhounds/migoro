@@ -29,3 +29,9 @@ func Success(h, m string) {
 	mf := aurora.Green(m)
 	fmt.Printf("%s %s\n", hf, mf)
 }
+
+func Notice(h, m string) {
+	hf := aurora.White(h + ":").Bold()
+	mf := aurora.White(m)
+	fmt.Printf("%s %s\n", hf, mf)
+}

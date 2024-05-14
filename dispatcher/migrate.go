@@ -1,7 +1,6 @@
 package dispatcher
 
 import (
-	"fmt"
 	"migoro/adapters"
 	"migoro/error_context"
 	"migoro/query"
@@ -45,7 +44,7 @@ func Migrate() {
 		}
 
 		utils.Info("Applying Migration", "...")
-		fmt.Println(migrationContents)
+		utils.Notice("Migration Content", migrationContents)
 
 		err, con := adapter.Connection()
 		if err != nil {
@@ -57,7 +56,6 @@ func Migrate() {
 		adapter.WriteMigrationLog(fileNoSuffix, hash)
 
 		utils.Success("Migration Applied", file)
-		fmt.Println("")
 
 		l++
 	}
