@@ -2,12 +2,19 @@ package dispatcher
 
 import (
 	"migoro/adapters"
+	"migoro/error_context"
 	"migoro/types"
 	"migoro/utils"
 )
 
 func initializeDatabase(adapter types.Adapter) {
-	if !adapter.DatabaseExists().Exists {
+	err, result := adapter.DatabaseExists()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+
+	if !result.Exists {
 		adapter.CreateDatabase()
 		utils.Success("Database Created", adapter.GetDatabaseName())
 	} else {
@@ -16,7 +23,12 @@ func initializeDatabase(adapter types.Adapter) {
 }
 
 func initializeMigrationLog(adapter types.Adapter) {
-	migrationTable := adapter.MigrationsLogExists()
+	err, migrationTable := adapter.MigrationsLogExists()
+
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
 
 	if !migrationTable.Exists {
 		adapter.CreateMigrationsLog()
@@ -27,7 +39,12 @@ func initializeMigrationLog(adapter types.Adapter) {
 }
 
 func Init() {
-	adapter := adapters.Init()
+	err, adapter := adapters.Init()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+
 	initializeDatabase(adapter)
 	initializeMigrationLog(adapter)
 }

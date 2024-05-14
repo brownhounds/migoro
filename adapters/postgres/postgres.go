@@ -2,10 +2,10 @@ package postgres
 
 import (
 	"fmt"
+	"migoro/error_context"
 	"migoro/query"
 	"migoro/types"
 	"migoro/utils"
-	"os"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -26,7 +26,7 @@ const (
 
 type Postgres struct{}
 
-func (adapter Postgres) Connection() *sqlx.DB {
+func (adapter Postgres) Connection() (error, *sqlx.DB) {
 	connection, err := sqlx.Open(utils.Env("SQL_DRIVER"), fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s search_path=%s",
 		utils.Env(SQL_HOST),
 		utils.Env(SQL_PORT),
@@ -38,7 +38,8 @@ func (adapter Postgres) Connection() *sqlx.DB {
 	))
 	if err != nil {
 		utils.Error("Database connection", err.Error())
-		os.Exit(1)
+		error_context.Context.SetError()
+		return err, nil
 	}
 
 	{
@@ -48,13 +49,14 @@ func (adapter Postgres) Connection() *sqlx.DB {
 		if err != nil {
 			connection.Close()
 			utils.Error("Database connection", err.Error())
-			os.Exit(1)
+			error_context.Context.SetError()
+			return err, nil
 		}
 	}
-	return connection
+	return nil, connection
 }
 
-func (adapter Postgres) ConnectionWithoutDB() *sqlx.DB {
+func (adapter Postgres) ConnectionWithoutDB() (error, *sqlx.DB) {
 	connection, err := sqlx.Open(utils.Env("SQL_DRIVER"), fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=%s",
 		utils.Env(SQL_HOST),
 		utils.Env(SQL_PORT),
@@ -64,7 +66,8 @@ func (adapter Postgres) ConnectionWithoutDB() *sqlx.DB {
 	))
 	if err != nil {
 		utils.Error("Database connection", err.Error())
-		os.Exit(1)
+		error_context.Context.SetError()
+		return err, nil
 	}
 
 	{
@@ -74,10 +77,11 @@ func (adapter Postgres) ConnectionWithoutDB() *sqlx.DB {
 		if err != nil {
 			connection.Close()
 			utils.Error("Database connection", err.Error())
-			os.Exit(1)
+			error_context.Context.SetError()
+			return err, nil
 		}
 	}
-	return connection
+	return nil, connection
 }
 
 func (adapter Postgres) ValidateEnvironment() {
@@ -101,34 +105,74 @@ func (adapter Postgres) GetDatabaseName() string {
 	return utils.Env(SQL_DB)
 }
 
-func (adapter Postgres) DatabaseExists() types.DbCheck {
-	return query.Exists(adapter.ConnectionWithoutDB(), DatabaseExistsQuery())
+func (adapter Postgres) DatabaseExists() (error, *types.DbCheck) {
+	err, con := adapter.ConnectionWithoutDB()
+	if err != nil {
+		error_context.Context.SetError()
+		return err, nil
+	}
+	return nil, query.Exists(con, DatabaseExistsQuery())
 }
 
 func (adapter Postgres) CreateDatabase() {
-	query.Query(adapter.ConnectionWithoutDB(), CreateDatabaseQuery())
+	err, con := adapter.ConnectionWithoutDB()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+	query.Query(con, CreateDatabaseQuery())
 }
 
-func (adapter Postgres) MigrationsLogExists() types.DbCheck {
-	return query.Exists(adapter.Connection(), TableLogExistsQuery())
+func (adapter Postgres) MigrationsLogExists() (error, *types.DbCheck) {
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return err, nil
+	}
+	return nil, query.Exists(con, TableLogExistsQuery())
 }
 
 func (adapter Postgres) CreateMigrationsLog() {
-	query.Query(adapter.Connection(), CreateLogTableQuery())
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+	query.Query(con, CreateLogTableQuery())
 }
 
-func (adapter Postgres) GetMigrationsFromLog() []types.Migration {
-	return query.GetMigrations(adapter.Connection(), GetMigrationsQuery())
+func (adapter Postgres) GetMigrationsFromLog() (error, *[]types.Migration) {
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return err, nil
+	}
+	return nil, query.GetMigrations(con, GetMigrationsQuery())
 }
 
 func (adapter Postgres) WriteMigrationLog(file, hash string) {
-	query.WriteMigrationLog(adapter.Connection(), WriteMigrationLogQuery(), file, hash)
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+	query.WriteMigrationLog(con, WriteMigrationLogQuery(), file, hash)
 }
 
-func (adapter Postgres) GetLatestMigrationsFromLog() []types.Migration {
-	return query.GetMigrations(adapter.Connection(), GetLatestMigrationsQuery())
+func (adapter Postgres) GetLatestMigrationsFromLog() (error, *[]types.Migration) {
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return err, nil
+	}
+	return nil, query.GetMigrations(con, GetLatestMigrationsQuery())
 }
 
 func (adapter Postgres) CleanMigrationLog(file string) {
-	query.CleanMigrationLog(adapter.Connection(), CleanMigrationLogQuery(), file)
+	err, con := adapter.Connection()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+	query.CleanMigrationLog(con, CleanMigrationLogQuery(), file)
 }

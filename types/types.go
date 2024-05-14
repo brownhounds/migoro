@@ -13,16 +13,16 @@ type DbCheck struct {
 }
 
 type Adapter interface {
-	Connection() *sqlx.DB
 	ValidateEnvironment()
+	CreateDatabase()
+	CreateMigrationsLog()
+	Connection() (error, *sqlx.DB)
 	GetMigrationTableName() string
 	GetDatabaseName() string
-	DatabaseExists() DbCheck
-	CreateDatabase()
-	MigrationsLogExists() DbCheck
-	CreateMigrationsLog()
-	GetMigrationsFromLog() []Migration
 	WriteMigrationLog(file string, hash string)
-	GetLatestMigrationsFromLog() []Migration
 	CleanMigrationLog(file string)
+	DatabaseExists() (error, *DbCheck)
+	MigrationsLogExists() (error, *DbCheck)
+	GetMigrationsFromLog() (error, *[]Migration)
+	GetLatestMigrationsFromLog() (error, *[]Migration)
 }

@@ -3,13 +3,18 @@ package dispatcher
 import (
 	"fmt"
 	"migoro/adapters"
+	"migoro/error_context"
 	"migoro/query"
 	"migoro/utils"
 	"strings"
 )
 
 func Migrate() {
-	adapter := adapters.Init()
+	err, adapter := adapters.Init()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
 
 	l := 0
 	f := utils.IOReadDir(utils.Env("MIGRATION_DIR"))
@@ -22,7 +27,13 @@ func Migrate() {
 
 		fileNoSuffix, _ := strings.CutSuffix(file, "_"+utils.UP+".sql")
 
-		if utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), fileNoSuffix) {
+		err, migrations := adapter.GetMigrationsFromLog()
+		if err != nil {
+			error_context.Context.SetError()
+			return
+		}
+
+		if utils.InSliceOfStructs(migrations, fileNoSuffix) {
 			continue
 		}
 
@@ -36,7 +47,13 @@ func Migrate() {
 		utils.Info("Applying Migration", "...")
 		fmt.Println(migrationContents)
 
-		query.ApplyMigration(adapter.Connection(), migrationContents)
+		err, con := adapter.Connection()
+		if err != nil {
+			error_context.Context.SetError()
+			return
+		}
+
+		query.ApplyMigration(con, migrationContents)
 		adapter.WriteMigrationLog(fileNoSuffix, hash)
 
 		utils.Success("Migration Applied", file)

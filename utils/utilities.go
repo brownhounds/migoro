@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/rand"
 	"fmt"
+	"migoro/error_context"
 	"migoro/types"
 	"os"
 	"regexp"
@@ -38,8 +39,9 @@ func getMigrationFileName(t, name, method string) string {
 
 func createMigrationFile(f string) {
 	if err := os.WriteFile(f, make([]byte, 0), 0o644); err != nil {
+		error_context.Context.SetError()
 		Error("Creating migration file", err.Error())
-		os.Exit(1)
+		return
 	}
 }
 
@@ -50,8 +52,9 @@ func getMigrationsPath() string {
 func CreateDirIfNotExist() {
 	if _, err := os.Stat(Env(MIGRATION_DIR)); os.IsNotExist(err) {
 		if err = os.MkdirAll(Env(MIGRATION_DIR), 0o755); err != nil {
+			error_context.Context.SetError()
 			Error("Creating migration directory", err.Error())
-			os.Exit(1)
+			return
 		}
 		Success("Creating migration directory", "Created")
 	}
@@ -79,9 +82,9 @@ func Exists(f string) bool {
 	return true
 }
 
-func InSliceOfStructs(slice []types.Migration, value string) bool {
+func InSliceOfStructs(slice *[]types.Migration, value string) bool {
 	file := types.Migration{MigrationFile: value}
-	for _, migration := range slice {
+	for _, migration := range *slice {
 		if migration == file {
 			return true
 		}

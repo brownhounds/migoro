@@ -3,6 +3,7 @@ package dispatcher
 import (
 	"fmt"
 	"migoro/adapters"
+	"migoro/error_context"
 	"migoro/utils"
 	"strings"
 
@@ -10,7 +11,11 @@ import (
 )
 
 func Status() {
-	adapter := adapters.Init()
+	err, adapter := adapters.Init()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
 
 	files := utils.IOReadDir(utils.Env("MIGRATION_DIR"))
 
@@ -38,7 +43,14 @@ func Status() {
 			continue
 		}
 		fileNoSuffix, _ := strings.CutSuffix(file, "_"+utils.UP+".sql")
-		if utils.InSliceOfStructs(adapter.GetMigrationsFromLog(), fileNoSuffix) {
+
+		err, migrations := adapter.GetMigrationsFromLog()
+		if err != nil {
+			error_context.Context.SetError()
+			return
+		}
+
+		if utils.InSliceOfStructs(migrations, fileNoSuffix) {
 			fmt.Println(aurora.Green(file + o + " APPLIED"))
 		} else {
 			fmt.Println(aurora.Red(file + o + " NOT APPLIED"))

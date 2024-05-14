@@ -1,14 +1,15 @@
 package dispatcher
 
 import (
+	"migoro/error_context"
 	"migoro/utils"
-	"os"
 )
 
 func Make(n string) {
 	if !utils.ValidateStringANU(n) {
+		error_context.Context.SetError()
 		utils.Error("Migration name", "Only alphanumeric characters and underscores are allowed for migration name.")
-		os.Exit(1)
+		return
 	}
 
 	utils.CreateMigrationFile(n)
