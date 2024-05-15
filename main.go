@@ -7,5 +7,5 @@ import (
 
 func main() {
 	cmd.Execute()
-	error_context.Context.ExitWithError()
+	error_context.Context.Exit()
 }

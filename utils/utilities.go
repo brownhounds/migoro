@@ -60,17 +60,18 @@ func CreateDirIfNotExist() {
 	}
 }
 
-func IOReadDir(root string) []string {
+func IOReadDir(root string) (err error, f []string) {
 	var files []string
 	fileInfo, err := os.ReadDir(root)
 	if err != nil {
+		error_context.Context.SetError()
 		Error("Reading migrations directory", err.Error())
-		os.Exit(1)
+		return err, nil
 	}
 	for _, file := range fileInfo {
 		files = append(files, file.Name())
 	}
-	return files
+	return nil, files
 }
 
 func Exists(f string) bool {
@@ -106,14 +107,16 @@ func stripSQLComments(c []byte) string {
 	return strings.Join(partsOut, "\n")
 }
 
-func GetMigrationFileContent(f string) string {
+func GetMigrationFileContent(f string) (err error, contents string) {
 	c, err := os.ReadFile(getMigrationsPath() + f)
 	if err != nil {
+		error_context.Context.SetError()
 		Error("Reading migration file", err.Error())
-		os.Exit(1)
+		return err, ""
 	}
 
-	return stripSQLComments(c)
+	out := stripSQLComments(c)
+	return nil, out
 }
 
 func ValidateStringANU(s string) bool {
@@ -129,13 +132,13 @@ func truncateString(str string, num int) string {
 	return newStr
 }
 
-func MakeRandom() string {
+func MakeRandom() (err error, random string) {
 	s := make([]byte, 16)
 	if _, err := rand.Read(s); err != nil {
 		Error("MakeRandom", fmt.Sprintf("No able to generate a random string: %s", err.Error()))
-		os.Exit(1)
+		return err, ""
 	}
-	return fmt.Sprintf("%x", s)
+	return nil, fmt.Sprintf("%x", s)
 }
 
 func ValidateEnvVariables(envVars []string) {

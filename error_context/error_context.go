@@ -15,7 +15,7 @@ func (e *ErrorContext) SetError() {
 	e.hasError = true
 }
 
-func (e *ErrorContext) ExitWithError() {
+func (e *ErrorContext) Exit() {
 	if e.hasError {
 		fmt.Println("!!!Exit triggered by context")
 		os.Exit(1)

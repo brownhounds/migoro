@@ -9,13 +9,13 @@ import (
 )
 
 func Exists(connection *sqlx.DB, query string) *types.DbCheck {
-	r := types.DbCheck{}
-	if err := connection.Get(&r, query); err != nil {
+	r := new(types.DbCheck)
+	if err := connection.Get(r, query); err != nil {
 		error_context.Context.SetError()
 		utils.Error("Executing query", err.Error())
 		return nil
 	}
-	return &r
+	return r
 }
 
 func Query(connection *sqlx.DB, query string) {
@@ -26,13 +26,13 @@ func Query(connection *sqlx.DB, query string) {
 }
 
 func GetMigrations(connection *sqlx.DB, query string) *[]types.Migration {
-	m := []types.Migration{}
-	if err := connection.Select(&m, query); err != nil {
+	m := new([]types.Migration)
+	if err := connection.Select(m, query); err != nil {
 		error_context.Context.SetError()
 		utils.Error("Getting migration log results", err.Error())
 		return nil
 	}
-	return &m
+	return m
 }
 
 func WriteMigrationLog(connection *sqlx.DB, query, file, hash string) {

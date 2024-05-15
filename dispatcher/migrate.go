@@ -16,8 +16,17 @@ func Migrate() {
 	}
 
 	l := 0
-	f := utils.IOReadDir(utils.Env("MIGRATION_DIR"))
-	hash := utils.MakeRandom()
+	err, f := utils.IOReadDir(utils.Env("MIGRATION_DIR")) // TODO: String ???
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
+
+	err, hash := utils.MakeRandom()
+	if err != nil {
+		error_context.Context.SetError()
+		return
+	}
 
 	for _, file := range f {
 		if !strings.HasSuffix(file, "_"+utils.UP+".sql") {
@@ -36,7 +45,13 @@ func Migrate() {
 			continue
 		}
 
-		migrationContents := strings.TrimSpace(utils.GetMigrationFileContent(file))
+		err, contents := utils.GetMigrationFileContent(file)
+		if err != nil {
+			error_context.Context.SetError()
+			return
+		}
+
+		migrationContents := strings.TrimSpace(contents)
 
 		if strings.TrimSpace(migrationContents) == "" {
 			utils.Warning("Migration file is empty", file)

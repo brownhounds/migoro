@@ -35,7 +35,13 @@ func Rollback() {
 
 	if len(dmi) != 0 {
 		for _, file := range dmi {
-			migrationContents := strings.TrimSpace(utils.GetMigrationFileContent(file))
+			err, contents := utils.GetMigrationFileContent(file)
+			if err != nil {
+				error_context.Context.SetError()
+				return
+			}
+
+			migrationContents := strings.TrimSpace(contents)
 
 			if migrationContents == "" {
 				utils.Warning("Rollback", fmt.Sprintf("Script not defined in: %s", file))

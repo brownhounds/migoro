@@ -14,17 +14,10 @@ func Status() {
 		return
 	}
 
-	files := utils.IOReadDir(utils.Env("MIGRATION_DIR"))
-
-	l := 0
-	for _, file := range files {
-		if !strings.HasSuffix(file, utils.UP+".sql") {
-			continue
-		}
-
-		if len(file) > l {
-			l = len(file)
-		}
+	err, files := utils.IOReadDir(utils.Env("MIGRATION_DIR"))
+	if err != nil {
+		error_context.Context.SetError()
+		return
 	}
 
 	for _, file := range files {
@@ -32,11 +25,16 @@ func Status() {
 			continue
 		}
 
-		o := strings.Repeat(" ", l-len(file))
-		c := strings.TrimSpace(utils.GetMigrationFileContent(file))
+		err, contents := utils.GetMigrationFileContent(file)
+		if err != nil {
+			error_context.Context.SetError()
+			return
+		}
+
+		c := strings.TrimSpace(contents)
 
 		if c == "" {
-			utils.Warning("EMPTY FILE", file+o)
+			utils.Warning("EMPTY FILE ", file)
 			continue
 		}
 		fileNoSuffix, _ := strings.CutSuffix(file, "_"+utils.UP+".sql")
@@ -48,9 +46,9 @@ func Status() {
 		}
 
 		if utils.InSliceOfStructs(migrations, fileNoSuffix) {
-			utils.Success("APPLIED", file+o)
+			utils.Success("APPLIED    ", file)
 		} else {
-			utils.Error("NOT APPLIED", file+o)
+			utils.Error("NOT APPLIED", file)
 		}
 	}
 }
