@@ -8,8 +8,8 @@ lint:
 fix:
 	golangci-lint run --fix
 
-tests:
-	go test ./test -v
+run_tests:
+	SNAPSHOTS_DIR=./snapshots go test ./tests -v
 
-tests_u:
-	UPDATE=yes go test ./test -v
+run_tests_u:
+	UPDATE=true SNAPSHOTS_DIR=./snapshots go test ./tests -v

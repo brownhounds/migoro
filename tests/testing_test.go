@@ -2,9 +2,9 @@ package testing_shit
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"migoro/dispatcher"
+	"migoro/snapshots"
 	"testing"
 )
 
@@ -13,6 +13,5 @@ func TestShit(t *testing.T) {
 	log.SetFlags(0)
 	log.SetOutput(buffer)
 	dispatcher.Init()
-
-	fmt.Print("dksijdihd" + buffer.String())
+	snapshots.ToMatchSnapshot(t, "Hello There!!!!!", "test1")
 }

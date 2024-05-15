@@ -32,6 +32,7 @@
 - [x] Pointer to interfaces instead of concrete types 🤔
 - [x] Structures Comparison
 - [x] File Embed - https://stackoverflow.com/questions/13904441/how-can-i-bundle-static-resources-in-a-go-program
+- [] Error Handling
 
 Printing structures:
 
