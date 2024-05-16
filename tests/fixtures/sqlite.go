@@ -14,6 +14,7 @@ type SqliteEnv struct {
 
 type SqliteFixture struct {
 	TEST_DATABASE string
+	MIGRATION_DIR string
 	ENV           []struct {
 		Key   string
 		Value string
@@ -22,13 +23,14 @@ type SqliteFixture struct {
 
 func (s *SqliteFixture) New() *SqliteFixture {
 	s.TEST_DATABASE = "test_database.db"
+	s.MIGRATION_DIR = "migrations"
 	s.ENV = []struct {
 		Key   string
 		Value string
 	}{
 		{Key: adapters.SQL_DRIVER, Value: adapters.SQLITE3},
 		{Key: sqlite.SQL_FILE, Value: s.TEST_DATABASE},
-		{Key: sqlite.MIGRATION_DIR, Value: "migrations"},
+		{Key: sqlite.MIGRATION_DIR, Value: s.MIGRATION_DIR},
 		{Key: sqlite.MIGRATION_TABLE, Value: "migration_log"},
 	}
 

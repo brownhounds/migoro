@@ -1,0 +1,3 @@
+[1;32mCreating migration directory:[0m [32mCreated[0m
+[1;32mMigration File Created:[0m [32mmigrations/1_create_test_table_up.sql[0m
+[1;32mMigration File Created:[0m [32mmigrations/1_create_test_table_down.sql[0m

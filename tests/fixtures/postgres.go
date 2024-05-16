@@ -14,6 +14,7 @@ type PostgresEnv struct {
 
 type PostgresFixture struct {
 	TEST_DATABASE string
+	MIGRATION_DIR string
 	ENV           []struct {
 		Key   string
 		Value string
@@ -22,6 +23,7 @@ type PostgresFixture struct {
 
 func (p *PostgresFixture) New() *PostgresFixture {
 	p.TEST_DATABASE = "test_database"
+	p.MIGRATION_DIR = "migrations"
 	p.ENV = []struct {
 		Key   string
 		Value string
@@ -34,7 +36,7 @@ func (p *PostgresFixture) New() *PostgresFixture {
 		{Key: postgres.SQL_DB, Value: p.TEST_DATABASE},
 		{Key: postgres.SQL_DB_SCHEMA, Value: "test_schema"},
 		{Key: postgres.SQL_SSL, Value: "disable"},
-		{Key: postgres.MIGRATION_DIR, Value: "migrations"},
+		{Key: postgres.MIGRATION_DIR, Value: p.MIGRATION_DIR},
 		{Key: postgres.MIGRATION_TABLE, Value: "migration_log"},
 		{Key: postgres.MIGRATION_SCHEMA, Value: "test_platform"},
 	}

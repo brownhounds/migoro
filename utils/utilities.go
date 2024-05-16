@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+var TimeUnix func() int64 = time.Now().UnixNano
+
 const (
 	MIGRATION_DIR = "MIGRATION_DIR"
 	UP            = "up"
@@ -21,7 +23,7 @@ const (
 func CreateMigrationFile(name string) {
 	CreateDirIfNotExist()
 
-	t := truncateString(strconv.FormatInt(time.Now().UnixNano(), 10), 12)
+	t := truncateString(strconv.FormatInt(TimeUnix(), 10), 12)
 
 	up := getMigrationFileName(t, name, UP)
 	down := getMigrationFileName(t, name, DOWN)
@@ -50,6 +52,7 @@ func getMigrationsPath() string {
 }
 
 func CreateDirIfNotExist() {
+	fmt.Println("ENV VAR: " + Env(MIGRATION_DIR))
 	if _, err := os.Stat(Env(MIGRATION_DIR)); os.IsNotExist(err) {
 		if err = os.MkdirAll(Env(MIGRATION_DIR), 0o755); err != nil {
 			error_context.Context.SetError()
@@ -127,7 +130,7 @@ func ValidateStringANU(s string) bool {
 func truncateString(str string, num int) string {
 	newStr := str
 	if len(str) > num {
-		newStr = str[0:num]
+		newStr = str[:num]
 	}
 	return newStr
 }
