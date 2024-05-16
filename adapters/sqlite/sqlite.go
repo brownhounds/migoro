@@ -65,6 +65,7 @@ func (adapter Sqlite) CreateDatabase() {}
 
 func (adapter Sqlite) MigrationsLogExists() (error, *types.DbCheck) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return err, nil
@@ -74,6 +75,7 @@ func (adapter Sqlite) MigrationsLogExists() (error, *types.DbCheck) {
 
 func (adapter Sqlite) CreateMigrationsLog() {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return
@@ -83,6 +85,7 @@ func (adapter Sqlite) CreateMigrationsLog() {
 
 func (adapter Sqlite) GetMigrationsFromLog() (error, *[]types.Migration) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return err, nil
@@ -92,6 +95,7 @@ func (adapter Sqlite) GetMigrationsFromLog() (error, *[]types.Migration) {
 
 func (adapter Sqlite) WriteMigrationLog(file, hash string) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return
@@ -101,6 +105,7 @@ func (adapter Sqlite) WriteMigrationLog(file, hash string) {
 
 func (adapter Sqlite) GetLatestMigrationsFromLog() (error, *[]types.Migration) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return err, nil
@@ -110,6 +115,7 @@ func (adapter Sqlite) GetLatestMigrationsFromLog() (error, *[]types.Migration) {
 
 func (adapter Sqlite) CleanMigrationLog(file string) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return

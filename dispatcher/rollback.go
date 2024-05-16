@@ -10,11 +10,7 @@ import (
 )
 
 func Rollback() {
-	err, adapter := adapters.Init()
-	if err != nil {
-		error_context.Context.SetError()
-		return
-	}
+	adapter := adapters.Init()
 
 	err, md := adapter.GetLatestMigrationsFromLog()
 	if err != nil {

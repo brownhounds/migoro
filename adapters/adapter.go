@@ -1,11 +1,9 @@
 package adapters
 
 import (
-	"errors"
 	"fmt"
 	"migoro/adapters/postgres"
 	"migoro/adapters/sqlite"
-	"migoro/error_context"
 	"migoro/types"
 	"migoro/utils"
 )
@@ -16,39 +14,31 @@ const (
 	SQLITE3    = "sqlite3"
 )
 
-var unresolvedAdapterErrorMessage = errors.New("could not resolve the adapter")
-
-func unresolvedAdapterError(adapter string) error {
-	return fmt.Errorf("%w: %s", unresolvedAdapterErrorMessage, adapter)
+func UnsetAdapterErrorMessage(driver string) string {
+	return fmt.Sprintf("Adapter is not set: consider setting environment variable - %s", driver)
 }
 
-func Init() (error, types.Adapter) {
-	adapter, err := resolveAdapter()
-	if err != nil {
-		error_context.Context.SetError()
-		utils.Error("Resolving Adapter", err.Error())
-		return err, nil
-	}
+func UnsupportedAdapterErrorMessage(driver string) string {
+	return fmt.Sprintf("Unsupported adapter: %s", driver)
+}
 
+func Init() types.Adapter {
+	adapter := resolveAdapter()
 	adapter.ValidateEnvironment()
-
-	return nil, adapter
+	return adapter
 }
 
-func resolveAdapter() (types.Adapter, error) {
+func resolveAdapter() types.Adapter {
 	switch utils.Env(SQL_DRIVER) {
 	case POSTGRES:
-		return &postgres.Postgres{}, nil
+		return &postgres.Postgres{}
 	case SQLITE3:
-		return &sqlite.Sqlite{}, nil
+		return &sqlite.Sqlite{}
 	default:
-		var adapter string
 		if utils.Env(SQL_DRIVER) == "" {
-			adapter = "ADAPTER NOT SET"
-		} else {
-			adapter = utils.Env(SQL_DRIVER)
+			panic(UnsetAdapterErrorMessage(SQL_DRIVER))
 		}
 
-		return nil, unresolvedAdapterError(adapter)
+		panic(UnsupportedAdapterErrorMessage(utils.Env(SQL_DRIVER)))
 	}
 }

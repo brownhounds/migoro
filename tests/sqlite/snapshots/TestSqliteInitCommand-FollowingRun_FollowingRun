@@ -1,0 +1,2 @@
+[1;33mDatabase already exists:[0m [33mtest_database.db[0m
+[1;33mTable already exists:[0m [33mmigration_log[0m

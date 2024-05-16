@@ -39,12 +39,7 @@ func initializeMigrationLog(adapter types.Adapter) {
 }
 
 func Init() {
-	err, adapter := adapters.Init()
-	if err != nil {
-		error_context.Context.SetError()
-		return
-	}
-
+	adapter := adapters.Init()
 	initializeDatabase(adapter)
 	initializeMigrationLog(adapter)
 }

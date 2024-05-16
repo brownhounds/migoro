@@ -33,6 +33,7 @@
 - [x] Structures Comparison
 - [x] File Embed - https://stackoverflow.com/questions/13904441/how-can-i-bundle-static-resources-in-a-go-program
 - [] Error Handling
+- [] Go publishing packages not a seamless as others
 
 Printing structures:
 

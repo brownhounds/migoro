@@ -8,11 +8,7 @@ import (
 )
 
 func Status() {
-	err, adapter := adapters.Init()
-	if err != nil {
-		error_context.Context.SetError()
-		return
-	}
+	adapter := adapters.Init()
 
 	err, files := utils.IOReadDir(utils.Env("MIGRATION_DIR"))
 	if err != nil {

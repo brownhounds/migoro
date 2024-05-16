@@ -9,11 +9,7 @@ import (
 )
 
 func Migrate() {
-	err, adapter := adapters.Init()
-	if err != nil {
-		error_context.Context.SetError()
-		return
-	}
+	adapter := adapters.Init()
 
 	l := 0
 	err, f := utils.IOReadDir(utils.Env("MIGRATION_DIR")) // TODO: String ???

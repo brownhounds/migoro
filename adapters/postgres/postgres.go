@@ -69,7 +69,6 @@ func (adapter Postgres) ConnectionWithoutDB() (error, *sqlx.DB) {
 		error_context.Context.SetError()
 		return err, nil
 	}
-
 	{
 		// Driver doesn't log error on initial connection
 		// Ping is necessary to evaluate early
@@ -91,9 +90,11 @@ func (adapter Postgres) ValidateEnvironment() {
 		SQL_USER,
 		SQL_PASSWORD,
 		SQL_DB,
+		SQL_DB_SCHEMA,
 		SQL_SSL,
 		MIGRATION_DIR,
 		MIGRATION_TABLE,
+		MIGRATION_SCHEMA,
 	})
 }
 
@@ -116,6 +117,7 @@ func (adapter Postgres) DatabaseExists() (error, *types.DbCheck) {
 
 func (adapter Postgres) CreateDatabase() {
 	err, con := adapter.ConnectionWithoutDB()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return
@@ -125,6 +127,7 @@ func (adapter Postgres) CreateDatabase() {
 
 func (adapter Postgres) MigrationsLogExists() (error, *types.DbCheck) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return err, nil
@@ -134,6 +137,7 @@ func (adapter Postgres) MigrationsLogExists() (error, *types.DbCheck) {
 
 func (adapter Postgres) CreateMigrationsLog() {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return
@@ -143,6 +147,7 @@ func (adapter Postgres) CreateMigrationsLog() {
 
 func (adapter Postgres) GetMigrationsFromLog() (error, *[]types.Migration) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return err, nil
@@ -152,6 +157,7 @@ func (adapter Postgres) GetMigrationsFromLog() (error, *[]types.Migration) {
 
 func (adapter Postgres) WriteMigrationLog(file, hash string) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return
@@ -161,6 +167,7 @@ func (adapter Postgres) WriteMigrationLog(file, hash string) {
 
 func (adapter Postgres) GetLatestMigrationsFromLog() (error, *[]types.Migration) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return err, nil
@@ -170,6 +177,7 @@ func (adapter Postgres) GetLatestMigrationsFromLog() (error, *[]types.Migration)
 
 func (adapter Postgres) CleanMigrationLog(file string) {
 	err, con := adapter.Connection()
+	defer con.Close()
 	if err != nil {
 		error_context.Context.SetError()
 		return

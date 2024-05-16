@@ -141,11 +141,15 @@ func MakeRandom() (err error, random string) {
 	return nil, fmt.Sprintf("%x", s)
 }
 
+func EnvVarNotDefinedErrorMessage(value string) string {
+	return fmt.Sprintf("ENV Variable is not defined: %s", value)
+}
+
 func ValidateEnvVariables(envVars []string) {
 	for _, value := range envVars {
 		_, defined := os.LookupEnv(value)
 		if !defined {
-			panic("ENV Variable is not defined: " + value)
+			panic(EnvVarNotDefinedErrorMessage(value))
 		}
 	}
 }
