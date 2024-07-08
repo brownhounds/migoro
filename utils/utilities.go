@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"migoro/types"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -142,4 +143,13 @@ func ValidateEnvVariables(envVars []string) {
 			panic("ENV Variable is not defined: " + value)
 		}
 	}
+}
+
+func GetMigrationFiles() []string {
+	dir, err := os.Getwd()
+	if err != nil {
+		Error("Reading Current Working Directory", err.Error())
+		os.Exit(1)
+	}
+	return IOReadDir(filepath.Join(dir, Env("MIGRATION_DIR")))
 }

@@ -12,7 +12,7 @@ func Migrate() {
 	adapter := adapters.Init()
 
 	l := 0
-	f := utils.IOReadDir(utils.Env("MIGRATION_DIR"))
+	f := utils.GetMigrationFiles()
 	hash := utils.MakeRandom()
 
 	for _, file := range f {

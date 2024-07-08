@@ -12,7 +12,7 @@ import (
 func Status() {
 	adapter := adapters.Init()
 
-	files := utils.IOReadDir(utils.Env("MIGRATION_DIR"))
+	files := utils.GetMigrationFiles()
 
 	l := 0
 	for _, file := range files {
