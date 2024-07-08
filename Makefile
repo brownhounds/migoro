@@ -13,3 +13,11 @@ run_tests:
 
 run_tests_u:
 	go clean -testcache && UPDATE=true SNAPSHOTS_DIR=./snapshots go test ./tests/... -v
+
+publish:
+	docker build -t brownhounds/migoro .
+	docker image tag brownhounds/migoro brownhounds/migoro:$(v)
+	docker push brownhounds/migoro
+
+	docker image tag brownhounds/migoro brownhounds/migoro:latest
+	docker push brownhounds/migoro

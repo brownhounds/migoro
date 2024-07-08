@@ -19,9 +19,9 @@ func TableLogExistsQuery() string {
 
 func CreateLogTableQuery() string {
 	return fmt.Sprintf(`
-		CREATE SCHEMA %s;
-		CREATE SCHEMA %s;
-		CREATE TABLE %s.%s (
+		CREATE SCHEMA IF NOT EXISTS %s;
+		CREATE SCHEMA IF NOT EXISTS %s;
+		CREATE TABLE IF NOT EXISTS %s.%s (
 			id serial PRIMARY KEY NOT NULL,
 			migration_file character varying(512) NOT NULL,
 			migration_hash TEXT NOT NULL,
