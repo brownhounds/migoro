@@ -3,13 +3,14 @@ package utils
 import (
 	"crypto/rand"
 	"fmt"
-	"migoro/types"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/brownhounds/migoro/types"
 )
 
 const (

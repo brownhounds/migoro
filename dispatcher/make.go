@@ -1,8 +1,9 @@
 package dispatcher
 
 import (
-	"migoro/utils"
 	"os"
+
+	"github.com/brownhounds/migoro/utils"
 )
 
 func Make(n string) {

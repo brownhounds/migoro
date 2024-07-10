@@ -3,11 +3,12 @@ package adapters
 import (
 	"errors"
 	"fmt"
-	"migoro/adapters/postgres"
-	"migoro/adapters/sqlite"
-	"migoro/types"
-	"migoro/utils"
 	"os"
+
+	"github.com/brownhounds/migoro/adapters/postgres"
+	"github.com/brownhounds/migoro/adapters/sqlite"
+	"github.com/brownhounds/migoro/types"
+	"github.com/brownhounds/migoro/utils"
 )
 
 const (

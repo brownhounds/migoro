@@ -2,7 +2,8 @@ package sqlite
 
 import (
 	"fmt"
-	"migoro/utils"
+
+	"github.com/brownhounds/migoro/utils"
 )
 
 func TableLogExistsQuery() string {

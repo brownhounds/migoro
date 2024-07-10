@@ -2,10 +2,11 @@ package postgres
 
 import (
 	"fmt"
-	"migoro/query"
-	"migoro/types"
-	"migoro/utils"
 	"os"
+
+	"github.com/brownhounds/migoro/query"
+	"github.com/brownhounds/migoro/types"
+	"github.com/brownhounds/migoro/utils"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"

@@ -1,9 +1,9 @@
 package dispatcher
 
 import (
-	"migoro/adapters"
-	"migoro/types"
-	"migoro/utils"
+	"github.com/brownhounds/migoro/adapters"
+	"github.com/brownhounds/migoro/types"
+	"github.com/brownhounds/migoro/utils"
 )
 
 func initializeDatabase(adapter types.Adapter) {

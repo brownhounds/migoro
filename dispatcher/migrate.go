@@ -2,10 +2,11 @@ package dispatcher
 
 import (
 	"fmt"
-	"migoro/adapters"
-	"migoro/query"
-	"migoro/utils"
 	"strings"
+
+	"github.com/brownhounds/migoro/adapters"
+	"github.com/brownhounds/migoro/query"
+	"github.com/brownhounds/migoro/utils"
 )
 
 func Migrate() {

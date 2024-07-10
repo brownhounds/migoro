@@ -1,4 +1,4 @@
-module migoro
+module github.com/brownhounds/migoro
 
 go 1.22.2
 

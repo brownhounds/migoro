@@ -1,9 +1,10 @@
 package query
 
 import (
-	"migoro/types"
-	"migoro/utils"
 	"os"
+
+	"github.com/brownhounds/migoro/types"
+	"github.com/brownhounds/migoro/utils"
 
 	"github.com/jmoiron/sqlx"
 )

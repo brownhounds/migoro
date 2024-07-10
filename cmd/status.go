@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"migoro/dispatcher"
+	"github.com/brownhounds/migoro/dispatcher"
 
 	"github.com/spf13/cobra"
 )

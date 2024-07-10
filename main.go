@@ -1,6 +1,6 @@
 package main
 
-import "migoro/cmd"
+import "github.com/brownhounds/migoro/cmd"
 
 func main() {
 	cmd.Execute()

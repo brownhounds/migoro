@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"migoro/version"
 	"os"
+
+	"github.com/brownhounds/migoro/version"
 
 	"github.com/spf13/cobra"
 
@@ -13,7 +14,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:     "migoro",
 	Short:   "CLI Database Migrator",
-	Version: version.Version,
+	Version: version.Ver,
 	Long:    fmt.Sprintf(`%s - Database migration manager%s`, aurora.Cyan("\nMigoro").String(), "\n\nAvailable Drivers:\n- Postgres\n- SQLite3"),
 }
 

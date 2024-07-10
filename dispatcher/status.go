@@ -2,9 +2,10 @@ package dispatcher
 
 import (
 	"fmt"
-	"migoro/adapters"
-	"migoro/utils"
 	"strings"
+
+	"github.com/brownhounds/migoro/adapters"
+	"github.com/brownhounds/migoro/utils"
 
 	"github.com/logrusorgru/aurora/v4"
 )
