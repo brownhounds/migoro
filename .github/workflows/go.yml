@@ -34,21 +34,11 @@ jobs:
           buildmode: default
           trimpath: true
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MIGORO_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v2
 
-      - name: Upload Release Assets
-        uses: glentiki/xbin-release-action@v1.0.0
+      - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.MIGORO_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          assets_path: ./build
+        run: gh release create ${{ github.ref_name }} ./build/* --title ${{ github.ref_name }} --notes '${{ steps.extract-release-notes.outputs.release_notes }}'
