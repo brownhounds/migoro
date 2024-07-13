@@ -9,6 +9,7 @@ COPY . .
 
 RUN go get -d -v
 
+RUN go generate ./...
 RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/migoro
 
 FROM scratch

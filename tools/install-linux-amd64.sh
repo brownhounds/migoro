@@ -11,7 +11,7 @@ log_message_info() {
 }
 
 log_message_info "🔧 Fetching executable..."
-wget https://github.com/brownhounds/migoro/releases/download/0.1.2/migoro-linux-amd64
+wget https://github.com/brownhounds/migoro/releases/download/v0.1.3/migoro-linux-amd64
 
 
 log_message_info "🔧 Installing..."

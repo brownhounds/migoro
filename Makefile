@@ -2,14 +2,20 @@ build:
 	go generate ./...
 	GOOS=linux go build -ldflags="-s -w" -o ./bin/migoro main.go
 
+generate:
+	go generate ./...
+
 lint:
 	golangci-lint run --fast
 
 fix:
 	golangci-lint run --fix
 
-move-version:
-	cp ./VERSION ./version/VERSION
+changelog-lint:
+	@changelog-lint
+
+version-lint:
+	@./scripts/lint-version.sh
 
 publish:
 	echo $(v) > ./VERSION
@@ -22,13 +28,23 @@ publish:
 	docker image tag brownhounds/migoro brownhounds/migoro:latest
 	docker push brownhounds/migoro
 
+release:
+	./scripts/release.sh $(v)
+
 git-tag:
-	git tag --sign $(v) -m $(v)
-	git push origin $(v)
+	./scripts/lint-version.sh
+	git tag --sign v$(v) -m v$(v)
+	git push origin v$(v)
 
 install:
 	GOOS=linux go build -ldflags="-s -w" -o ./bin/migoro main.go
 	cp ./bin/migoro ~/.local/bin/migoro
+
+install-changelog-lint:
+	@go install github.com/chavacava/changelog-lint@master
+
+install-hooks:
+	@pre-commit install
 
 targets:
 	@go tool dist list
