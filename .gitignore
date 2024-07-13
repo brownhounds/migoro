@@ -1,3 +1,4 @@
 migrations
 bin
 version/VERSION
+build

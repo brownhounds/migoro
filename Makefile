@@ -32,3 +32,14 @@ install:
 
 targets:
 	@go tool dist list
+
+ci-build:
+	go generate ./...
+	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o ./build/migoro-windows-amd64.exe main.go
+	GOOS=windows GOARCH=arm64 go build -ldflags="-s -w" -o ./build/migoro-windows-arm64.exe main.go
+
+	GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o ./build/migoro-linux-amd64 main.go
+	GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o ./build/migoro-linux-arm64 main.go
+
+	GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o ./build/migoro-darwin-amd64 main.go
+	GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o ./build/migoro-darwin-arm64 main.go

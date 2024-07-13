@@ -17,19 +17,19 @@ Dependencies: go >= 1.22.2
 
 ```bash
 go generate ./...
-GOOS=linux go build -ldflags="-s -w" -o ./bin/migoro main.go
+go build -ldflags="-s -w" -o ./bin/migoro main.go
 ```
 
 ### Install Script LINUX/amd64
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/brownhounds/migoro/0.1.1/tools/install-linux-amd64.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/brownhounds/migoro/0.1.2/tools/install-linux-amd64.sh)"
 ```
 
 ### Install Script LINUX/arm64
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/brownhounds/migoro/0.1.1/tools/install-linux-arm64.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/brownhounds/migoro/0.1.2/tools/install-linux-arm64.sh)"
 ```
 
 ### Post Install/LINUX
